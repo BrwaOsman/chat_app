@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:chat_messnger/page/home.dart';
+import 'package:chat_messnger/route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -14,7 +15,7 @@ import 'package:chat_messnger/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const Messnger());
+    await tester.pumpWidget(const Router_page());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

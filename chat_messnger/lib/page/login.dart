@@ -1,8 +1,10 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unnecessary_new
 
+import 'package:chat_messnger/page/friends.dart';
 import 'package:chat_messnger/page/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../server/server_auth.dart';
@@ -29,9 +31,7 @@ class _Login_systemState extends State<Login_system> {
   @override
   Widget build(BuildContext context) {
 
-     User? user = Provider.of<Server_auth>(context, listen: true).theUser;
-  return user != null ?Messnger():
-    Scaffold(
+    return Scaffold(
       body: Container(
         child: Form(
           key: _formKey,
@@ -39,13 +39,7 @@ class _Login_systemState extends State<Login_system> {
             
             children: [
               Center(
-                child: Text(
-                  "LOGIN ",
-                  style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic),
-                ),
+                child: Lottie.asset("asset/lottie/login.json", width: 600, height: 200)
               ),
               SizedBox(
                 height: 20,
@@ -90,12 +84,12 @@ class _Login_systemState extends State<Login_system> {
                     email = email.toLowerCase();
                     await Provider.of<Server_auth>(context, listen: false)
                         .login_sytelm(email, password);
-                    Navigator.pushNamed(context, '/messnger');
+                    Navigator.pushNamed(context, '/friends');
                     }
                    
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.yellow,
+                    primary: Colors.green,
                     shape: new RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(30.0),
                     ),
@@ -105,7 +99,7 @@ class _Login_systemState extends State<Login_system> {
                         top: 10, bottom: 10, left: 65, right: 65),
                     child: Text(
                       "Login",
-                      style: TextStyle(color: Colors.black, fontSize: 20),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   )),
               SizedBox(
@@ -177,12 +171,12 @@ class _Login_systemState extends State<Login_system> {
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-                color: Colors.yellow, width: 2.0),
+                color: Colors.green, width: 2.0),
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-                color: Colors.yellow, width: 2.0),
+                color: Colors.green, width: 2.0),
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
         ),

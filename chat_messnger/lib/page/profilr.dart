@@ -8,24 +8,23 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lottie/lottie.dart';
 
 import 'package:provider/provider.dart';
 
 import '../model/user_model.dart';
 import '../server/server_auth.dart';
 
-class Register_system extends StatefulWidget {
-  const Register_system({Key? key}) : super(key: key);
+class Profile extends StatefulWidget {
+  const Profile({ Key? key }) : super(key: key);
 
   @override
-  _Register_systemState createState() => _Register_systemState();
+  _ProfileState createState() => _ProfileState();
 }
 
-class _Register_systemState extends State<Register_system> {
-  final _auth = FirebaseAuth.instance;
-  // final ImagePicker _picker = ImagePicker();
-  // XFile? _file;
+class _ProfileState extends State<Profile> {
+    final _auth = FirebaseAuth.instance;
+  final ImagePicker _picker = ImagePicker();
+  XFile? _file;
   String? img_url;
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   TextEditingController _email = TextEditingController();
@@ -45,6 +44,25 @@ class _Register_systemState extends State<Register_system> {
     return Scaffold(
       body: Column(
         children: [
+          _file == null
+              ? Container(
+                  height: 120,
+                  width: 120,
+                  decoration: BoxDecoration(color: Colors.blue),
+                )
+              : Container(
+                  height: 120,
+                  width: 120,
+                  decoration: BoxDecoration(
+                      image:
+                          DecorationImage(image: FileImage(File(_file!.path)))),
+                ),
+          ElevatedButton(
+              onPressed: () async {
+                _file = await _picker.pickImage(source: ImageSource.gallery);
+                print(_file!.path);
+              },
+              child: Text("Select_iameg")),
           Expanded(
             child: Form(
               key: _formKey,
@@ -52,8 +70,14 @@ class _Register_systemState extends State<Register_system> {
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Center(
-                      child: Lottie.asset("asset/lottie/register.json",
-                          width: 600, height: 150)),
+                    child: Text(
+                      "SING UP ",
+                      style: TextStyle(
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic),
+                    ),
+                  ),
                   // SizedBox(
                   //   height: 20,
                   // ),
@@ -86,7 +110,7 @@ class _Register_systemState extends State<Register_system> {
                   ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          // uploadTheSelectedFile(_authProvider.theUser!.uid);
+                          uploadTheSelectedFile(_authProvider.theUser!.uid);
                           setState(() {
                             password = _password.value.text;
                             email = _email.value.text;
@@ -102,7 +126,7 @@ class _Register_systemState extends State<Register_system> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
+                        primary: Colors.yellow,
                         shape: new RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(30.0),
                         ),
@@ -112,7 +136,7 @@ class _Register_systemState extends State<Register_system> {
                             top: 10, bottom: 10, left: 65, right: 65),
                         child: Text(
                           "Create Account",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          style: TextStyle(color: Colors.black, fontSize: 20),
                         ),
                       )),
                   SizedBox(
@@ -184,6 +208,7 @@ class _Register_systemState extends State<Register_system> {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
       child: TextFormField(
+        // initialValue: nam,
         controller: _controller,
         obscureText: _obs,
         decoration: InputDecoration(
@@ -193,11 +218,11 @@ class _Register_systemState extends State<Register_system> {
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.green, width: 2.0),
+            borderSide: BorderSide(color: Colors.yellow, width: 2.0),
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.green, width: 2.0),
+            borderSide: BorderSide(color: Colors.yellow, width: 2.0),
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
         ),
@@ -234,8 +259,7 @@ class _Register_systemState extends State<Register_system> {
     userModel.uid = user.uid;
     userModel.firstName = _firstName.text;
     userModel.secondName = _lastName.text;
-    userModel.Img_url = null;
-    userModel.status = 'online';
+    userModel.Img_url = _file!.path;
 
     await firebaseFirestore
         .collection("users")
@@ -244,21 +268,21 @@ class _Register_systemState extends State<Register_system> {
     Fluttertoast.showToast(msg: "Account created successfully :) ");
   }
 
-  // Future<String?> uploadTheSelectedFile(String uid) async {
-  //   //selected image as file
-  //   File _theImageFile = File(_file!.path);
+  Future<String?> uploadTheSelectedFile(String uid) async {
+    //selected image as file
+    File _theImageFile = File(_file!.path);
 
-  //   //upload the selected image
-  //   await _firebaseStorage
-  //       .ref()
-  //       .child('users/$uid')
-  //       .putFile(_theImageFile)
-  //       .then((p) async {
-  //     img_url = await p.ref.getDownloadURL();
-  //     debugPrint("dl =======> " + img_url!);
-  //   });
-  //   return img_url;
-  //   //todo remove this if for production
-  //   //recieve the downloadURL for the image
-  // }
+    //upload the selected image
+    await _firebaseStorage
+        .ref()
+        .child('users/$uid')
+        .putFile(_theImageFile)
+        .then((p) async {
+      img_url = await p.ref.getDownloadURL();
+      debugPrint("dl =======> " + img_url!);
+    });
+    return img_url;
+    //todo remove this if for production
+    //recieve the downloadURL for the image
+  }
 }
